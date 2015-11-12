@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>D3 tutorial</title>
+    <script src = "http://d3js.org/d3.v3.min.js"></script>
+</head>
+
+<body>
+	
+	<script>
+
+
+		var dataArray = [20, 40, 50, 10, 30];
+		var width = 500;
+
+		var height = dataArray.length * 100;
+
+		
+
+		var canvas = d3.select("body")
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height)
+						//.append("g") 											//this groups all the SVG elements
+						.attr("transform", "translate(50,50)"); 
+
+		var widthScale = 	d3.scale.linear()
+							.domain([0, Math.max.apply(Math, dataArray)]) 		// continuous input domain; scales according to the max value
+							.range([0, width]);									// continuous output range
+
+
+		var colorScale = d3.scale.linear()
+							.domain([0, Math.max.apply(Math, dataArray)]) 
+							.range(["red","blue"]);
+
+		
+
+		var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+								.append("rect")
+								.attr("width", function(d){ return widthScale(d);})
+								.attr("height", (height/dataArray.length)-10)
+								.attr("y", function(d,i){ return i*100; })
+								.attr("fill", function(d){return colorScale(d)	} )
+									.transition()
+										.style("color", "black")
+							        //.delay(function(d, i) { return i * 1000 })
+							        //.duration(1000);    
+							        // .style('width', function(d) { return (d * 150) + 'px'; })
+							        // .style('opacity', 1)
+							        // .text(function(d) { return d + ' miles'; });
+								
+
+		
+	</script>
+</body>
+</html>
