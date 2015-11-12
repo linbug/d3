@@ -19,22 +19,26 @@
 
 
 		var dataArray = [20, 40, 50, 10, 30, 50, 70, 77, 21];
-		var width = 500;
+		var height = 500;
 
-		var height = dataArray.length * 100;
+		var barWidth = 30
+
+		var width = dataArray.length * (barWidth + 10);
 
 		
 
 		var canvas = d3.select("body")
 						.append("svg")
-						.attr("width", width)
-						.attr("height", height)
-						//.append("g") 											//this groups all the SVG elements
-						.attr("transform", "translate(50,50)"); 
+						 
+						.attr("width", width + 50)
+						.attr("height", height + 50)
+						.append("g")												//this groups all the SVG elements
+						.attr("transform", "translate(50,50)"); 					//if you're using this, remember this is not independent from 											
+						
 
-		var widthScale = 	d3.scale.linear()
+		var heightScale = 	d3.scale.linear()
 							.domain([0, Math.max.apply(Math, dataArray)]) 		// continuous input domain; scales according to the max value
-							.range([0, width]);									// continuous output range
+							.range([0, height]);									// continuous output range
 
 
 		var colorScale = d3.scale.linear()
@@ -47,20 +51,16 @@
 							.data(dataArray)
 							.enter()
 								.append("rect")
-								.attr("width", 0)
-								.attr("height", (height/dataArray.length)-10)
-								.attr("y", function(d,i){ return i*100; })
+								.attr("height", 0)
+								.attr("width", barWidth)
+								.attr("x", function(d,i){ return i*(barWidth+5); })
 								.attr("fill", function(d){return colorScale(d)	} )
-								
 									.transition()
-										.delay(function(d, i) { return i * 1000 })
-										.duration(1000)
-										.attr("width", function(d){ return widthScale(d);})
-							        //.delay(function(d, i) { return i * 1000 })
-							        //.duration(1000);    
-							        // .style('width', function(d) { return (d * 150) + 'px'; })
-							        // .style('opacity', 1)
-							        // .text(function(d) { return d + ' miles'; });
+									.delay(function(d, i) { return i * 1000 })
+									.duration(1000)
+									.attr("height", function(d){ return heightScale(d);});
+
+									
 								
 
 		
