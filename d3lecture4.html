@@ -42,10 +42,16 @@
 
 
 		var colorScale = d3.scale.linear()
-							.domain([0, Math.max.apply(Math, dataArray)]) 
+							.domain([0, dataArray.length]) 
 							.range(["red","blue"]);
 
-		
+		var myMouseoverFunction = function() {
+				// remember how d3 goes through EACH of the selected elements and uses your function for EACH element?
+				// well, everytime the function is used for an element, it has a "secret" variable called 'this' which holds that element.
+				// we use 'this' to increment the current element's radius by 10
+				var rectangle_col = d3.select(this);
+				rectangle_col.attr("fill", "blue");
+			}
 
 		var bars = canvas.selectAll("rect")
 							.data(dataArray)
@@ -54,10 +60,10 @@
 								.attr("height", 0)
 								.attr("width", barWidth)
 								.attr("x", function(d,i){ return i*(-barWidth-5); })
-								//.attr("y", function(d){return d}) //set the y position of the bars
+								
 								.attr("transform", "rotate(180)")
-
-								.attr("fill", function(d){return colorScale(d)	} )
+								.on("mouseover", myMouseoverFunction)
+								.attr("fill", function(d,i){return colorScale(i)	} )
 									.transition()
 									.delay(function(d, i) { return i * 500 })
 									.duration(500)
