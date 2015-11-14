@@ -33,12 +33,12 @@
 						.attr("width", width + 50)
 						.attr("height", height + 50)
 						.append("g")												//this groups all the SVG elements
-						.attr("transform", "translate(50,50)"); 					//if you're using this, remember this is not independent from 											
+						.attr("transform", "translate(50,500)"); 					//if you're using this, remember this is not independent from 											
 						
 
 		var heightScale = 	d3.scale.linear()
 							.domain([0, Math.max.apply(Math, dataArray)]) 		// continuous input domain; scales according to the max value
-							.range([0, height]);									// continuous output range
+							.range([0, height ]);									// continuous output range
 
 
 		var colorScale = d3.scale.linear()
@@ -53,12 +53,16 @@
 								.append("rect")
 								.attr("height", 0)
 								.attr("width", barWidth)
-								.attr("x", function(d,i){ return i*(barWidth+5); })
+								.attr("x", function(d,i){ return i*(-barWidth-5); })
+								//.attr("y", function(d){return d}) //set the y position of the bars
+								.attr("transform", "rotate(180)")
+
 								.attr("fill", function(d){return colorScale(d)	} )
 									.transition()
-									.delay(function(d, i) { return i * 1000 })
-									.duration(1000)
+									.delay(function(d, i) { return i * 500 })
+									.duration(500)
 									.attr("height", function(d){ return heightScale(d);});
+									
 
 									
 								
