@@ -58,7 +58,9 @@
 				//rectangle_col.attr("fill", "blue")
 				rectangle_col.transition()
 				.duration(800)
-				.attr("fill", "purple");
+				.attr("fill", "purple")
+				.attr("height", rectangle_col.attr("height")*1 - 10)
+				.tranition();
 			}
 
 		var bars = canvas.selectAll("rect")
