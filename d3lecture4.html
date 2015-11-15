@@ -18,10 +18,15 @@
 	<script>
 
 
-		var dataArray = [20, 40, 50, 10, 30, 50, 70, 77, 21];
+		var dataArray = [];
+
+		for (var i=0, t=50; i<t; i++) {
+    		dataArray.push(Math.round(Math.random() * t))
+		};
+		
 		var height = 500;
 
-		var barWidth = 30
+		var barWidth = 10
 
 		var width = dataArray.length * (barWidth + 10);
 
@@ -50,7 +55,10 @@
 				// well, everytime the function is used for an element, it has a "secret" variable called 'this' which holds that element.
 				// we use 'this' to increment the current element's radius by 10
 				var rectangle_col = d3.select(this);
-				rectangle_col.attr("fill", "blue");
+				//rectangle_col.attr("fill", "blue")
+				rectangle_col.transition()
+				.duration(800)
+				.attr("fill", "purple");
 			}
 
 		var bars = canvas.selectAll("rect")
@@ -65,7 +73,7 @@
 								.on("mouseover", myMouseoverFunction)
 								.attr("fill", function(d,i){return colorScale(i)	} )
 									.transition()
-									.delay(function(d, i) { return i * 500 })
+									//.delay(function(d, i) { return i * 60 })
 									.duration(500)
 									.attr("height", function(d){ return heightScale(d);});
 									
