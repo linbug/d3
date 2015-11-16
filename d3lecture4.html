@@ -26,7 +26,7 @@
 		
 		var height = 500;
 
-		var barWidth = 10
+		var barWidth = 10;
 
 		var width = dataArray.length * (barWidth + 10);
 
@@ -52,9 +52,22 @@
 
 		var myMouseoverFunction = function() {
 				var rectangle_col = d3.select(this);
+				
 				rectangle_col.transition()
 				.duration(800)
+				.attr("height", rectangle_col.attr("height")*1 - 20)
+				.ease("elastic")
 				.attr("fill", "purple")
+				;
+			}
+
+		var myMouseoutFunction = function() {
+				var rectangle_col = d3.select(this);
+				rectangle_col.transition()
+				.duration(800)
+				.ease("elastic")
+				.style('fill', this.getAttribute('initialcolor'))
+				.attr('height', this.getAttribute('initialheight'))
 				
 				;
 			}
@@ -66,10 +79,12 @@
 								.attr("height", 0)
 								.attr("width", barWidth)
 								.attr("x", function(d,i){ return i*(-barWidth-5); })
-								
 								.attr("transform", "rotate(180)")
-								.on("mouseover", myMouseoverFunction)
+								.attr("initialcolor", function(d,i){return colorScale(i)})
+								.attr("initialheight", function(d){ return heightScale(d);})
 								.attr("fill", function(d,i){return colorScale(i)	} )
+								.on("mouseover", myMouseoverFunction)
+								.on("mouseout", myMouseoutFunction)
 									.transition()
 									//.delay(function(d, i) { return i * 60 })
 									.duration(500)
