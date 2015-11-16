@@ -51,16 +51,12 @@
 							.range(["red","blue"]);
 
 		var myMouseoverFunction = function() {
-				// remember how d3 goes through EACH of the selected elements and uses your function for EACH element?
-				// well, everytime the function is used for an element, it has a "secret" variable called 'this' which holds that element.
-				// we use 'this' to increment the current element's radius by 10
 				var rectangle_col = d3.select(this);
-				//rectangle_col.attr("fill", "blue")
 				rectangle_col.transition()
 				.duration(800)
 				.attr("fill", "purple")
-				.attr("height", rectangle_col.attr("height")*1 - 10)
-				.tranition();
+				
+				;
 			}
 
 		var bars = canvas.selectAll("rect")
