@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<style>
+    body {
+      padding: 10px;
+      background: #000;
+    }
+
+</style>
+
+<head>
+    <title>D3 tutorial</title>
+    <script src = "http://d3js.org/d3.v3.min.js"></script>
+    <script src = "riffwave.js"></script>
+</head>
+
+<body>
+	
+	<script>
+
+
+		var dataArray = [];
+
+		for (var i=0, t=50; i<t; i++) {
+    		dataArray.push(Math.round(Math.random() * t))
+		};
+		
+		var height = 500;
+
+		var barWidth = 10;
+
+		var width = dataArray.length * (barWidth + 10);
+
+		function simHertz(hz) {
+			    var audio = new Audio();
+			    var wave = new RIFFWAVE();
+			    var data = [];
+
+			    wave.header.sampleRate = 44100;
+
+			    var seconds = 2;
+
+			    for (var i = 0; i < wave.header.sampleRate * seconds; i ++) {
+			        data[i] = Math.round(128 + 127 * Math.sin(i * 2 * Math.PI * hz / wave.header.sampleRate));
+			    }
+
+			    wave.Make(data);
+			    audio.src = wave.dataURI;
+			    return audio;
+				}
+
+
+		var pianoScale = d3.scale.linear()
+							.domain([0, height])
+							.range([27, 900]);
+
+		var canvas = d3.select("body")
+						.append("svg")
+						 
+						.attr("width", width + 50)
+						.attr("height", height + 50)
+						.append("g")												//this groups all the SVG elements
+						.attr("transform", "translate(50,500)"); 					//if you're using this, remember this is not independent from 											
+						
+
+		var heightScale = 	d3.scale.linear()
+							.domain([0, d3.max(dataArray)]) 		// continuous input domain; scales according to the max value
+							.range([25, height ]);									// continuous output range
+
+
+		var colorScale = d3.scale.linear()
+							.domain([0, dataArray.length]) 
+							.range(["red","blue"]);
+
+		var myMouseoverFunction = function() {
+				var rectangle_col = d3.select(this);
+				var audio = simHertz(pianoScale(this.getAttribute('height')));
+					audio.play();
+				
+				rectangle_col.transition()
+				.duration(100)
+				.attr("fill", "purple")
+				.transition()
+				.duration(800)
+				.attr("height", rectangle_col.attr("height")*1 - 20)
+				.ease("elastic")
+				
+				console.log(this.getAttribute('fill'))
+			}
+
+		var myMouseoutFunction = function() {
+				var rectangle_col = d3.select(this);
+				rectangle_col.transition()
+				.duration(800)
+				.ease("elastic")
+				.attr('fill', this.getAttribute('initialcolor'))
+				.attr('height', this.getAttribute('initialheight'))
+				
+				;
+			}
+
+		var bars = canvas.selectAll("rect")
+							.data(dataArray)
+							.enter()
+								.append("rect")
+								.attr("height", 0)
+								.attr("width", barWidth)
+								.attr("x", function(d,i){ return i*(-barWidth-5); })
+								.attr("transform", "rotate(180)")
+								.attr("initialcolor", function(d,i){return colorScale(i)})
+								.attr("initialheight", function(d){ return heightScale(d);})
+								.attr("fill", function(d,i){return colorScale(i)	} )
+								.on("mouseover", myMouseoverFunction)
+								.on("mouseout", myMouseoutFunction)
+									.transition()
+									//.delay(function(d, i) { return i * 60 })
+									.duration(500)
+									.attr("height", function(d){ return heightScale(d);});
+		
+		
+									
+								
+
+		
+	</script>
+</body>
+</html>
