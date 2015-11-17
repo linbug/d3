@@ -22,8 +22,9 @@
 		var dataArray = [];
 
 		for (var i=0, t=50; i<t; i++) {
-    		dataArray.push(Math.round(Math.random() * t))
+    		dataArray.push(Math.log(i/10))
 		};
+		console.log(d3.max(dataArray))
 		
 		var height = 500;
 
@@ -51,7 +52,7 @@
 
 
 		var pianoScale = d3.scale.linear()
-							.domain([0, height])
+							.domain([0, d3.max(dataArray)])
 							.range([27, 900]);
 
 		var canvas = d3.select("body")
@@ -72,11 +73,12 @@
 							.domain([0, dataArray.length]) 
 							.range(["red","blue"]);
 
-		var myMouseoverFunction = function() {
+		var myMouseoverFunction = function(data) {
+			
 				var rectangle_col = d3.select(this);
-				var audio = simHertz(pianoScale(this.getAttribute('height')));
+				var audio = simHertz(pianoScale(data));
 					audio.play();
-				
+				console.log(pianoScale(data))
 				rectangle_col.transition()
 				.duration(100)
 				.attr("fill", "purple")
@@ -85,7 +87,7 @@
 				.attr("height", rectangle_col.attr("height")*1 - 20)
 				.ease("elastic")
 				
-				console.log(this.getAttribute('fill'))
+				//console.log(this.getAttribute('fill'))
 			}
 
 		var myMouseoutFunction = function() {
