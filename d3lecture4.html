@@ -50,6 +50,10 @@
 				}
 
 
+		var pianoScale = d3.scale.linear()
+							.domain([0, height])
+							.range([27, 1000]);
+
 		var canvas = d3.select("body")
 						.append("svg")
 						 
@@ -61,7 +65,7 @@
 
 		var heightScale = 	d3.scale.linear()
 							.domain([0, Math.max.apply(Math, dataArray)]) 		// continuous input domain; scales according to the max value
-							.range([0, height ]);									// continuous output range
+							.range([25, height ]);									// continuous output range
 
 
 		var colorScale = d3.scale.linear()
@@ -70,15 +74,18 @@
 
 		var myMouseoverFunction = function() {
 				var rectangle_col = d3.select(this);
-				var audio = simHertz(this.getAttribute('height'));
+				var audio = simHertz(pianoScale(this.getAttribute('height')));
 					audio.play();
+				
 				rectangle_col.transition()
+				.duration(100)
+				.attr("fill", "purple")
+				.transition()
 				.duration(800)
 				.attr("height", rectangle_col.attr("height")*1 - 20)
 				.ease("elastic")
-				.attr("fill", "purple")
 				
-				
+				console.log(this.getAttribute('fill'))
 			}
 
 		var myMouseoutFunction = function() {
@@ -86,7 +93,7 @@
 				rectangle_col.transition()
 				.duration(800)
 				.ease("elastic")
-				.style('fill', this.getAttribute('initialcolor'))
+				.attr('fill', this.getAttribute('initialcolor'))
 				.attr('height', this.getAttribute('initialheight'))
 				
 				;
