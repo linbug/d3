@@ -31,22 +31,24 @@
 
 		var width = dataArray.length * (barWidth + 10);
 
-		var audio = new Audio(); // create the HTML5 audio element
-				var wave = new RIFFWAVE(); // create an empty wave file
-				var data = []; // yes, it's an array
+		function simHertz(hz) {
+			    var audio = new Audio();
+			    var wave = new RIFFWAVE();
+			    var data = [];
 
-				wave.header.sampleRate = 44100; // set sample rate to 44KHz
-				wave.header.numChannels = 2; // two channels (stereo)
+			    wave.header.sampleRate = 44100;
 
-				var i = 0;
-				while (i<100000) { 
-				  data[i++] = 128+Math.round(127*Math.sin(i/10)); // left speaker
-				  data[i++] = 128+Math.round(127*Math.sin(i/200)); // right speaker
+			    var seconds = 2;
+
+			    for (var i = 0; i < wave.header.sampleRate * seconds; i ++) {
+			        data[i] = Math.round(128 + 127 * Math.sin(i * 2 * Math.PI * hz / wave.header.sampleRate));
+			    }
+
+			    wave.Make(data);
+			    audio.src = wave.dataURI;
+			    return audio;
 				}
 
-			wave.Make(data); // make the wave file
-			audio.src = wave.dataURI; // set audio source
-			audio.play()
 
 		var canvas = d3.select("body")
 						.append("svg")
@@ -68,14 +70,15 @@
 
 		var myMouseoverFunction = function() {
 				var rectangle_col = d3.select(this);
-				
+				var audio = simHertz(this.getAttribute('height'));
+					audio.play();
 				rectangle_col.transition()
 				.duration(800)
 				.attr("height", rectangle_col.attr("height")*1 - 20)
 				.ease("elastic")
 				.attr("fill", "purple")
 				
-				audio.play(); // we should hear two tones one on each speaker
+				
 			}
 
 		var myMouseoutFunction = function() {
