@@ -22,72 +22,61 @@
 		var dataArray = [];
 
 		for (var i=0, t=50; i<t; i++) {
-    		dataArray.push(Math.log(i/10))
-		};
-		console.log(d3.max(dataArray))
+    		dataArray.push(i)
+		};																		//Populate DataArray with values		
 		
-		var height = 500;
+		var height = 500;														//Set the height of the chart											
 
-		var barWidth = 10;
+		var barWidth = 5;														//Set the width of the bars
 
-		var width = dataArray.length * (barWidth + 10);
+		var width = dataArray.length * (barWidth + 10);							//Set the width of the canvas
 
-		function simHertz(hz) {
+		var canvas = d3.select("body")											//Make the canvas and set attribute
+						.append("svg")
+						.attr("width", width + 50)
+						.attr("height", height + 50)
+						.append("g")											
+						.attr("transform", "translate(50,500)"); 				//Move so that the convas will fill the screen after we flip it
+
+		var pianoScale = d3.scale.linear()										//Scales the input data to a value between 27 - 900 hz
+							.domain([0, d3.max(dataArray)])
+							.range([27, 900]);
+											
+						
+		var heightScale = 	d3.scale.linear()									//Scales the input data to a height between 25 - 500 px
+							.domain([0, d3.max(dataArray)]) 		
+							.range([25, height ]);					
+
+
+		var colorScale = d3.scale.linear()										//Scales the input data to a colour 
+							.domain([0, dataArray.length]) 
+							.range(["red","blue"]);
+
+		function simHertz(hz) {													//Converts input number to that sound in hz
 			    var audio = new Audio();
 			    var wave = new RIFFWAVE();
 			    var data = [];
-
 			    wave.header.sampleRate = 44100;
-
 			    var seconds = 2;
-
 			    for (var i = 0; i < wave.header.sampleRate * seconds; i ++) {
 			        data[i] = Math.round(128 + 127 * Math.sin(i * 2 * Math.PI * hz / wave.header.sampleRate));
 			    }
-
 			    wave.Make(data);
 			    audio.src = wave.dataURI;
 			    return audio;
 				}
 
-
-		var pianoScale = d3.scale.linear()
-							.domain([0, d3.max(dataArray)])
-							.range([27, 900]);
-
-		var canvas = d3.select("body")
-						.append("svg")
-						 
-						.attr("width", width + 50)
-						.attr("height", height + 50)
-						.append("g")												//this groups all the SVG elements
-						.attr("transform", "translate(50,500)"); 					//if you're using this, remember this is not independent from 											
-						
-
-		var heightScale = 	d3.scale.linear()
-							.domain([0, d3.max(dataArray)]) 		// continuous input domain; scales according to the max value
-							.range([25, height ]);									// continuous output range
-
-
-		var colorScale = d3.scale.linear()
-							.domain([0, dataArray.length]) 
-							.range(["red","blue"]);
-
-		var myMouseoverFunction = function(data) {
-			
+		var myMouseoverFunction = function(data) {									
 				var rectangle_col = d3.select(this);
-				var audio = simHertz(pianoScale(data));
+				var audio = simHertz(pianoScale(data));							//On mouseover, makes sound proportional to size of bar
 					audio.play();
-				console.log(pianoScale(data))
 				rectangle_col.transition()
 				.duration(100)
-				.attr("fill", "purple")
+				.attr("fill", "purple")											//fills bar in purple
 				.transition()
 				.duration(800)
-				.attr("height", rectangle_col.attr("height")*1 - 20)
+				.attr("height", rectangle_col.attr("height")*1 - 20)			//decreases height
 				.ease("elastic")
-				
-				//console.log(this.getAttribute('fill'))
 			}
 
 		var myMouseoutFunction = function() {
@@ -95,34 +84,28 @@
 				rectangle_col.transition()
 				.duration(800)
 				.ease("elastic")
-				.attr('fill', this.getAttribute('initialcolor'))
-				.attr('height', this.getAttribute('initialheight'))
-				
-				;
+				.attr('fill', this.getAttribute('initialcolor'))				//On mouseoff, return colour to initial colour
+				.attr('height', this.getAttribute('initialheight'))				//Return height to initial height
 			}
 
 		var bars = canvas.selectAll("rect")
 							.data(dataArray)
 							.enter()
 								.append("rect")
-								.attr("height", 0)
+								.attr("height", 0)								
 								.attr("width", barWidth)
-								.attr("x", function(d,i){ return i*(-barWidth-5); })
-								.attr("transform", "rotate(180)")
-								.attr("initialcolor", function(d,i){return colorScale(i)})
-								.attr("initialheight", function(d){ return heightScale(d);})
-								.attr("fill", function(d,i){return colorScale(i)	} )
-								.on("mouseover", myMouseoverFunction)
+								.attr("x", function(d,i){ return i*(-barWidth-5); })			//initiate bars at posiitons x
+								.attr("transform", "rotate(180)")								//rotate the bars by 180 degrees so they are now columns that 																go UP
+								.attr("initialcolor", function(d,i){return colorScale(i)}) 		//Set initial colour attr for each bar
+								.attr("initialheight", function(d){ return heightScale(d);})	//Set initial height attr
+								.attr("fill", function(d,i){return colorScale(i)	} )			//Actually colour the bars
+								.on("mouseover", myMouseoverFunction)				
 								.on("mouseout", myMouseoutFunction)
 									.transition()
-									//.delay(function(d, i) { return i * 60 })
+									//.delay(function(d, i) { return i * 600 })
 									.duration(500)
-									.attr("height", function(d){ return heightScale(d);});
-		
-		
-									
-								
-
+									.attr("height", function(d){ return heightScale(d);});		//grow bars at the start
+						
 		
 	</script>
 </body>
