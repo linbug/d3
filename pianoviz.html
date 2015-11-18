@@ -19,6 +19,15 @@
     fill: white;
 }
 
+.ylabel text {
+
+	font-family: sans-serif;
+    font-size: 8px;
+    fill: white;
+}
+
+
+
 </style>
 
 <head>
@@ -35,7 +44,7 @@
 		var dataArray = [];
 
 		for (var i=0, t=50; i<t; i++) {
-    		dataArray.push((i))
+    		dataArray.push((Math.sin(i/10)))
 		};																		//Populate DataArray with values		
 		
 		var height = 500;														//Set the height of the chart											
@@ -50,12 +59,12 @@
 		var heightAxis = 	d3.scale.linear()									
 							.domain([27, 900]) 									//the input is the possible range of freqs		
 							.range([height, 0 ]);									//the output is the height of the canvas
-	console.log(heightAxis)
+
 		var yAxis = d3.svg.axis()
     					.scale(heightAxis)
     					.orient("left")
 		    					
-    	console.log(yAxis)
+
 		var canvas = d3.select("body")											//Make the canvas and set attribute
 						.append("svg")
 						.attr("width", width + 50)
@@ -77,7 +86,7 @@
 							.domain([0, dataArray.length]) 
 							.range(["red","blue"]);
 
-		function simHertz(hz) {													//Converts input number to that sound in hz
+		var simHertz =  function(hz) {													//Converts input number to that sound in hz
 			    var audio = new Audio();
 			    var wave = new RIFFWAVE();
 			    var data = [];
@@ -136,7 +145,19 @@
 						
 						.attr("class","axis")
 						.attr("transform", "translate(0,-500)")
-						.call(yAxis)		
+						.call(yAxis)	
+
+			canvas.append("text")
+					    .attr("class", "ylabel")
+					    .attr("text-anchor", "end")
+					    .attr("x", 300)
+					    .attr("y", -40)
+					    .attr("transform", "rotate(-90)")
+					    .attr("fill", "white")
+					    .attr("font-family", "sans-serif")
+					    .attr("font-size", "10px")
+					    .text("Frequency (hz)");
+
 	</script>
 </body>
 </html>
