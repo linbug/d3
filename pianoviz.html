@@ -3,8 +3,21 @@
 <style>
     body {
       padding: 10px;
-      background: #000;
+      background: black;
     }
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: white;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+    fill: white;
+}
 
 </style>
 
@@ -22,7 +35,7 @@
 		var dataArray = [];
 
 		for (var i=0, t=50; i<t; i++) {
-    		dataArray.push(i)
+    		dataArray.push((i))
 		};																		//Populate DataArray with values		
 		
 		var height = 500;														//Set the height of the chart											
@@ -30,23 +43,35 @@
 		var barWidth = 5;														//Set the width of the bars
 
 		var width = dataArray.length * (barWidth + 10);							//Set the width of the canvas
-
+		
+		var heightScale = 	d3.scale.linear()									//Scales the input data to a height between 25 - 500 px
+							.domain([0, d3.max(dataArray)]) 		
+							.range([0, height ]);					
+		var heightAxis = 	d3.scale.linear()									
+							.domain([27, 900]) 									//the input is the possible range of freqs		
+							.range([height, 0 ]);									//the output is the height of the canvas
+	console.log(heightAxis)
+		var yAxis = d3.svg.axis()
+    					.scale(heightAxis)
+    					.orient("left")
+		    					
+    	console.log(yAxis)
 		var canvas = d3.select("body")											//Make the canvas and set attribute
 						.append("svg")
 						.attr("width", width + 50)
 						.attr("height", height + 50)
 						.append("g")											
-						.attr("transform", "translate(50,500)"); 				//Move so that the convas will fill the screen after we flip it
+						.attr("transform", "translate(50,530)") 				//Move so that the convas will fill the screen after we flip it
+						
+
+	
 
 		var pianoScale = d3.scale.linear()										//Scales the input data to a value between 27 - 900 hz
 							.domain([0, d3.max(dataArray)])
 							.range([27, 900]);
 											
 						
-		var heightScale = 	d3.scale.linear()									//Scales the input data to a height between 25 - 500 px
-							.domain([0, d3.max(dataArray)]) 		
-							.range([25, height ]);					
-
+		
 
 		var colorScale = d3.scale.linear()										//Scales the input data to a colour 
 							.domain([0, dataArray.length]) 
@@ -105,8 +130,13 @@
 									//.delay(function(d, i) { return i * 600 })
 									.duration(500)
 									.attr("height", function(d){ return heightScale(d);});		//grow bars at the start
+			console.log(dataArray)	
+
+			canvas.append("g")						
 						
-		
+						.attr("class","axis")
+						.attr("transform", "translate(0,-500)")
+						.call(yAxis)		
 	</script>
 </body>
 </html>
